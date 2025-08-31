@@ -1,0 +1,1 @@
+echo strpos("Hello world!", "world");

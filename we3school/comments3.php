@@ -1,0 +1,1 @@
+echo "Welcome Home!"; // Outputs a welcome message
