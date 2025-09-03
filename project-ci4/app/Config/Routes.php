@@ -10,6 +10,8 @@ $routes->get('/about', 'Page::about');
 
 $routes->get('/hello', 'Hello::index');
 
+$routes->get('/dosen', 'Dosen::display');
+
 $routes->get('/mahasiswa', 'Mahasiswa::index');
 $routes->get('/mahasiswa/loop', 'Mahasiswa::tabelLoop');
 $routes->get('/mahasiswa/list', 'Mahasiswa::list');
