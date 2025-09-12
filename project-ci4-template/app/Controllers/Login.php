@@ -11,7 +11,7 @@ class Login extends BaseController
     {
         return view('login/form', [
             'title' => 'Login',
-            'content' => '' // placeholder, nanti diisi di view
+            'content' => view('login/form')
         ]);
     }
 

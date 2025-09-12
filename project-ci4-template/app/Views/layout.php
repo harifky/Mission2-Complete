@@ -66,7 +66,5 @@
     <div class="footer">
         <p>&copy; <?= date('Y') ?> My Website</p>
     </div>
-
 </body>
-
 </html>
