@@ -40,22 +40,15 @@ class DosenController extends Controller
         return view('dosen.courses.students', compact('course'));
     }
 
-    public function updateNilai(Request $request, $id)
+    public function addStudent($id)
     {
-        $data = $request->validate([
-            'nilai' => 'nullable|string|max:2'
-        ]);
+        $course = MataKuliah::findOrFail($id);
 
-        $enrollment = Enrollment::findOrFail($id);
+        if ($course->dosen->user_id !== Auth::id()) abort(403);
 
-        // pastikan dosen yang sedang login adalah pengampu MK
-        if ($enrollment->mataKuliah->dosen->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak berhak mengubah nilai ini');
-        }
+        $mahasiswas = Mahasiswa::with('user')->get();
 
-        $enrollment->update(['nilai' => $data['nilai']]);
-
-        return back()->with('success', 'Nilai berhasil diperbarui');
+        return view('dosen.courses.add-student', compact('course', 'mahasiswas'));
     }
 
     public function create()
@@ -119,41 +112,37 @@ class DosenController extends Controller
         return redirect()->route('dosen.mycourses')->with('success', 'Mata kuliah berhasil dihapus');
     }
 
-    public function addStudent($id)
+    public function createMahasiswa()
     {
-        $course = MataKuliah::findOrFail($id);
-
-        if ($course->dosen->user_id !== Auth::id()) abort(403);
-
-        $mahasiswas = Mahasiswa::with('user')->get();
-
-        return view('dosen.courses.add-student', compact('course', 'mahasiswas'));
+        return view('dosen.mahasiswa.create');
     }
 
-    public function storeStudent(Request $request, $id)
+    public function storeMahasiswa(Request $request)
     {
-        $course = MataKuliah::findOrFail($id);
-
-        if ($course->dosen->user_id !== Auth::id()) abort(403);
-
-        $request->validate([
-            'mahasiswa_id' => 'required|exists:mahasiswas,id'
+        $data = $request->validate([
+            'nim' => 'required|string|unique:mahasiswas,nim',
+            'full_name' => 'required|string|max:255',
+            'tahun_masuk' => 'required|integer|min:1900|max:2100',
         ]);
 
-        $exists = Enrollment::where('mahasiswa_id', $request->mahasiswa_id)
-            ->where('mata_kuliah_id', $id)
-            ->exists();
+        // Extract last 3 digits of nim
+        $last3 = substr($data['nim'], -3);
 
-        if ($exists) {
-            return back()->with('error', 'Mahasiswa sudah terdaftar di mata kuliah ini.');
-        }
-
-        Enrollment::create([
-            'mahasiswa_id' => $request->mahasiswa_id,
-            'mata_kuliah_id' => $id,
-            'enroll_date' => now()
+        // Create user first with username and default password
+        $user = \App\Models\User::create([
+            'name' => $data['full_name'],
+            'username' => 'mhs' . $last3,
+            'password' => bcrypt($last3 . 'power'),
+            'role' => 'mahasiswa',
         ]);
 
-        return redirect()->route('dosen.courses.students', $id)->with('success', 'Mahasiswa berhasil ditambahkan');
+        // Create mahasiswa linked to user
+        Mahasiswa::create([
+            'user_id' => $user->id,
+            'nim' => $data['nim'],
+            'tahun_masuk' => $data['tahun_masuk'],
+        ]);
+
+        return redirect()->route('dosen.mycourses')->with('success', 'Mahasiswa berhasil didaftarkan');
     }
 }
