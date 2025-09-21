@@ -13,7 +13,12 @@ class DosenController extends Controller
 {
     public function dashboard()
     {
-        return view('dosen.dashboard');
+        $dosen = Auth::user()->dosen;
+
+        // ambil semua mata kuliah dengan jumlah mahasiswa
+        $courses = $dosen->mataKuliah()->withCount('mahasiswas')->get();
+
+        return view('dosen.dashboard', compact('courses'));
     }
 
     public function myCourses()

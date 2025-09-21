@@ -33,3 +33,29 @@
     @endif
 </div>
 @endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let nilaiCells = document.querySelectorAll('table tbody tr td:nth-child(4)');
+    let total = 0, count = 0;
+
+    nilaiCells.forEach(cell => {
+        if (cell.textContent.trim() !== '-' && !isNaN(cell.textContent)) {
+            total += parseFloat(cell.textContent);
+            count++;
+        }
+    });
+
+    if (count > 0) {
+        let rata = (total / count).toFixed(2);
+
+        // Tambahkan row baru di bawah tabel
+        let tbody = document.querySelector('table tbody');
+        let tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="3"><b>Rata-rata Nilai</b></td><td><b>${rata}</b></td>`;
+        tbody.appendChild(tr);
+    }
+});
+</script>
+@endsection

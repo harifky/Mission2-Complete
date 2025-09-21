@@ -28,11 +28,14 @@
                 <td>
                     <a href="{{ route('dosen.courses.students', $course->id) }}" class="btn btn-sm btn-info">Mahasiswa</a>
                     <a href="{{ route('dosen.courses.edit', $course->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                    <form action="{{ route('dosen.courses.destroy', $course->id) }}" method="POST" style="display:inline">
+                    <form action="{{ route('dosen.courses.destroy', $course->id) }}"
+                        method="POST"
+                        class="form-destroy d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus mata kuliah ini?')">Hapus</button>
+                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                     </form>
+
                 </td>
 
             </tr>
@@ -41,4 +44,24 @@
     </table>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.form-destroy').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let row = this.closest('tr');
+            let namaMK = row.querySelector('td:nth-child(2)').textContent;
+            let jumlah = row.querySelector('td:nth-child(3)').textContent;
+
+            if (confirm(`Yakin ingin hapus MK: ${namaMK} (Jumlah Mahasiswa: ${jumlah})?`)) {
+                this.submit();
+            }
+        });
+    });
+});
+</script>
 @endsection

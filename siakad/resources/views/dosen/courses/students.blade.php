@@ -35,7 +35,9 @@
                 <td>{{ $mhs->tahun_masuk }}</td>
                 <td>{{ $enrollment->nilai ?? '-' }}</td>
                 <td>
-                    <form method="POST" action="{{ route('dosen.enrollments.updateNilai', $enrollment->id) }}" class="d-flex">
+                    <form method="POST"
+                        action="{{ route('dosen.enrollments.updateNilai', $enrollment->id) }}"
+                        class="d-flex form-update-nilai">
                         @csrf
                         <input type="text" name="nilai" value="{{ $enrollment->nilai }}" class="form-control form-control-sm me-2" style="width:70px;">
                         <button type="submit" class="btn btn-sm btn-primary">Simpan</button>
@@ -50,4 +52,30 @@
 
     <a href="{{ route('dosen.mycourses') }}" class="btn btn-secondary mt-3">Kembali</a>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.form-update-nilai').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                let nilaiInput = this.querySelector('input[name="nilai"]');
+                let nilai = nilaiInput.value.trim();
+
+                if (nilai === "" || isNaN(nilai)) {
+                    e.preventDefault();
+                    alert("Nilai harus diisi angka!");
+                    nilaiInput.style.border = "2px solid red";
+                } else if (parseFloat(nilai) < 0 || parseFloat(nilai) > 100) {
+                    e.preventDefault();
+                    alert("Nilai harus di antara 0 - 100!");
+                    nilaiInput.style.border = "2px solid red";
+                } else {
+                    // reset border kalau valid
+                    nilaiInput.style.border = "1px solid #ced4da";
+                }
+            });
+        });
+    });
+</script>
 @endsection

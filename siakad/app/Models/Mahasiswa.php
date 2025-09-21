@@ -21,4 +21,9 @@ class Mahasiswa extends Model
     {
         return $this->belongsToMany(MataKuliah::class, 'enrollments', 'mahasiswa_id', 'mata_kuliah_id')->withTimestamps();
     }
+
+    public function scopeWithCourses($query)
+    {
+        return $query->with('mataKuliah');
+    }
 }
