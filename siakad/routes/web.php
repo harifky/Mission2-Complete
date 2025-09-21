@@ -51,7 +51,7 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
 
     Route::post('/enrollments/{id}/update-nilai', [DosenController::class, 'updateNilai'])->name('enrollments.updateNilai');
 
-    // New routes for Mahasiswa registration
+    // Mahasiswa registration routes
     Route::get('/mahasiswa/create', [DosenController::class, 'createMahasiswa'])->name('mahasiswa.create');
     Route::post('/mahasiswa', [DosenController::class, 'storeMahasiswa'])->name('mahasiswa.store');
 });

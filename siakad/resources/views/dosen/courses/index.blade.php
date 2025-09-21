@@ -6,6 +6,7 @@
 
     @if($courses->isEmpty())
     <p>Anda belum mengampu mata kuliah apapun.</p>
+    <a href="{{ route('dosen.courses.create') }}" class="btn btn-success mb-3">+ Tambah Mata Kuliah</a>
     @else
 
     <a href="{{ route('dosen.courses.create') }}" class="btn btn-success mb-3">+ Tambah Mata Kuliah</a>
